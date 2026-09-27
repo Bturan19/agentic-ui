@@ -1,0 +1,45 @@
+<div id="transcript" class="transcript">
+  {% if not items %}
+  <div class="empty">
+    <p>Henüz mesaj yok. Bir talimat yazın ya da aşağıdaki önerilerden başlayın.</p>
+    <div class="suggestions">
+      <button type="button" class="suggestion" data-prompt="Portföyü son 7 gün için özetle; riskleri ve fırsatları çıkar.">Portföyü özetle</button>
+      <button type="button" class="suggestion" data-prompt="Ev-Yaşam kategorisinde 48 saatlik flaş indirim kampanyası planla; ürünleri performans verisine göre seç.">Ev-Yaşam flaş kampanya planla</button>
+      <button type="button" class="suggestion" data-prompt="ROAS'ı 1'in altında olan kampanyaları bul ve duraklatmayı öner.">Zayıf kampanyaları bul</button>
+      <button type="button" class="suggestion" data-prompt="Bugünkü aktif kampanyaları ve bütçe kullanımını özetle.">Günlük durum özeti</button>
+    </div>
+  </div>
+  {% endif %}
+  {% for item in items %}
+  {% if item.role == "user" %}
+  <div class="msg msg-user">
+    <div class="msg-content">{{ item.text }}</div>
+  </div>
+  {% else %}
+  <div class="msg msg-assistant">
+    {% if item.thinking %}
+    <details class="thinking">
+      <summary>Düşünme</summary>
+      <pre>{{ item.thinking }}</pre>
+    </details>
+    {% endif %}
+    {% if item.text %}
+    <div class="msg-content markdown">{{ item.text | markdown | safe }}</div>
+    {% endif %}
+    {% if item.tool_calls %}
+    <div class="tool-stack">
+      {% for call in item.tool_calls %}
+      {% include "partials/_tool_card.html" %}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+
+<div id="pending-approvals" class="pending-approvals">
+  {% for approval in pending_approvals %}
+  {% include "partials/_approval_card.html" %}
+  {% endfor %}
+</div>

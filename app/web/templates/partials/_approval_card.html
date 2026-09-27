@@ -1,0 +1,16 @@
+<div class="approval-card" data-approval-id="{{ approval.id }}">
+  <div class="approval-head">
+    <span class="approval-title">Onay gerekiyor: <code>{{ approval.tool_name }}</code></span>
+    <span class="approval-time">{{ approval.created_at | localtime }}</span>
+  </div>
+  {% if approval.reason %}<div class="approval-reason">{{ approval.reason }}</div>{% endif %}
+  <details class="tool-card">
+    <summary><span class="tool-name">argümanlar</span></summary>
+    <pre>{{ approval.args_pretty }}</pre>
+  </details>
+  <input type="text" name="note" placeholder="Gerekçe / not (opsiyonel)" />
+  <div class="approval-actions">
+    <button type="button" class="btn btn-approve" data-approval-action="approve">Onayla</button>
+    <button type="button" class="btn btn-deny" data-approval-action="deny">Reddet</button>
+  </div>
+</div>

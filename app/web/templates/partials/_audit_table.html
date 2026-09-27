@@ -1,0 +1,22 @@
+<table class="audit-table">
+  <thead>
+    <tr>
+      <th>Zaman</th>
+      <th>Tür</th>
+      <th>İsim</th>
+      <th>Detay</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for entry in entries %}
+    <tr>
+      <td class="nowrap">{{ entry.ts | localtime }}</td>
+      <td><span class="chip chip-{{ entry.kind }}">{{ entry.kind }}</span></td>
+      <td class="nowrap">{{ entry.name }}</td>
+      <td class="payload"><code>{{ entry.payload }}</code></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4" class="empty">Kayıt yok.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>

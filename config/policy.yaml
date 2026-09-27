@@ -1,0 +1,30 @@
+# Kampanya guardrail politikalari.
+# Bu esikler HEM ajan tool'lari icinde (server-side) uygulanir HEM de system prompt'a enjekte edilir.
+# Prompt'a guvenilmez; gercek kontrol tool fonksiyonlarinin icindedir.
+# Limit altindaki aksiyonlari ajan otonom uygular; limit ustu aksiyonlar onay kuyruguna duser.
+
+currency: TRY
+
+limits:
+  max_discount_pct: 20            # tek kampanyada maksimum indirim yuzdesi
+  max_budget_per_campaign: 50000  # tek kampanya butcesi (TL)
+  max_daily_budget_delta: 75000   # gun icinde toplam butce degisimi (TL)
+  max_active_campaigns: 25        # ayni anda aktif kampanya sayisi
+  max_campaign_days: 14           # tek kampanya suresi (gun)
+
+# Kategori bazli override'lar (opsiyonel).
+categories:
+  elektronik:
+    max_discount_pct: 15
+  ev-yasam:
+    max_discount_pct: 25
+
+# Otonom yazma islemlerinin durduruldugu zaman araliklari.
+blackout:
+  enabled: false
+  windows: []                     # orn: ["22:00-07:00"]
+
+# Kampanya onerilerinde kullanilan ekonomi hedefleri.
+economics:
+  min_expected_margin_pct: 8
+  target_roi: 1.3

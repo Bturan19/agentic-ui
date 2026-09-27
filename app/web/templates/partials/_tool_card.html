@@ -1,0 +1,19 @@
+{% set status_labels = {"ok": "tamamlandı", "pending": "çalışıyor", "retry": "yeniden deneme"} %}
+<details class="tool-card status-{{ call.status }}" data-tool-id="{{ call.id }}">
+  <summary>
+    <span class="tool-dot"></span>
+    <span class="tool-label">{{ call.label }}</span>
+    {% if call.brief %}<span class="tool-brief">{{ call.brief }}</span>{% endif %}
+    <span class="tool-status">{{ status_labels.get(call.status, call.status) }}</span>
+  </summary>
+  <div class="tool-args">
+    <span class="label">argümanlar</span>
+    <pre>{{ call.args }}</pre>
+  </div>
+  {% if call.result %}
+  <div class="tool-result">
+    <span class="label">sonuç</span>
+    <pre>{{ call.result }}</pre>
+  </div>
+  {% endif %}
+</details>

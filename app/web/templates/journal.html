@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Journal — Agentic Kampanya Konsolu{% endblock %}
+{% block content %}
+<div class="page-layout">
+  <aside class="sidebar">
+    <h2 class="sidebar-title">Günler</h2>
+    <ul class="day-list">
+      {% for day in days %}
+      <li><a href="/journal?day={{ day }}" class="conversation-link {% if day == selected %}active{% endif %}">{{ day }}</a></li>
+      {% else %}
+      <li class="empty">Henüz journal kaydı yok.</li>
+      {% endfor %}
+    </ul>
+  </aside>
+  <section class="doc-pane">
+    <header class="chat-header">
+      <h1>Journal{% if selected %} — {{ selected }}{% endif %}</h1>
+      <span class="muted">Ajanın karar ve aksiyon günlüğü</span>
+    </header>
+    {% if content_html %}
+    <article class="markdown">{{ content_html | safe }}</article>
+    {% else %}
+    <div class="empty">İçerik yok. Ajan anlamlı işlerden sonra buraya kayıt yazar.</div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

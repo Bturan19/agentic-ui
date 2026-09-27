@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="chat-layout">
+  <aside class="sidebar">
+    <button id="new-conversation" class="btn btn-primary">+ Yeni sohbet</button>
+    <ul class="conversation-list">
+      {% for item in conversations %}
+      <li>
+        <a href="/c/{{ item.id }}" class="conversation-link {% if item.id == conversation.id %}active{% endif %}">
+          <span class="conversation-title">{{ item.title or 'Adsız sohbet' }}</span>
+          {% if item.kind == 'scheduled' %}<span class="chip chip-auto">oto</span>{% endif %}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </aside>
+
+  <section class="chat-main" data-conversation-id="{{ conversation.id }}" data-status="{{ active_status }}">
+    <header class="chat-header">
+      <h1>{{ conversation.title or 'Yeni sohbet' }}</h1>
+      <span id="run-status" class="status status-{{ active_status }}">{{ active_status_label }}</span>
+    </header>
+
+    <div id="chat-feed" class="chat-feed">
+      {% include "partials/_feed.html" %}
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <form id="composer" class="composer">
+      <textarea id="message-input" rows="3"
+        placeholder="Bir şey yazın… ör. 'Ev ve Yaşam kategorisinde 48 saatlik flaş indirim planla, ürünleri BQ'den seç'"></textarea>
+      <button type="submit" id="send-button" class="btn btn-primary">Gönder</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

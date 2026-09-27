@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Agentic Kampanya Konsolu{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js" defer></script>
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">◈ Agentic Kampanya Konsolu</a>
+    <nav class="topnav">
+      <a href="/">Sohbet</a>
+      <a href="/journal">Journal</a>
+      <a href="/audit">Audit</a>
+    </nav>
+    <div id="approval-badge" class="approval-badge" hx-get="/partials/badge" hx-trigger="load, every 15s" hx-swap="innerHTML"></div>
+  </header>
+  {% block content %}{% endblock %}
+</body>
+</html>

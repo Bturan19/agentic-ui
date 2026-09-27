@@ -1,0 +1,98 @@
+# MCP Toolbox icin ornek arac tanimlari.
+#
+# Calistirma (HTTP modu):
+#   ./toolbox --tools-file config/toolbox/tools.yaml --transport http --port 5000
+#
+# Generic BigQuery tool'lari (execute_sql, forecast, analyze_contribution, ask_data_insights)
+# icin ek olarak --prebuilt bigquery bayragini kullanabilirsiniz.
+#
+# Guvenlik notu: asagidaki gibi parametreli (bigquery-sql) tool'lar, serbest SQL'e
+# (execute_sql) gore daha guvenlidir; mumkun oldugunca bunlari tercih edin.
+
+kind: source
+name: marketplace-bq
+type: bigquery
+project: YOUR_GCP_PROJECT
+location: EU
+
+---
+kind: tool
+name: campaign_daily_performance
+type: bigquery-sql
+source: marketplace-bq
+description: Kampanya bazinda gunluk ciro, siparis, harcama ve marj getirir.
+parameters:
+  - name: campaign_id
+    type: string
+    description: Kampanya ID (orn. CMP-1234ABCD)
+  - name: days
+    type: integer
+    description: Kac gunluk veri isteniyor (1-30)
+statement: |
+  SELECT
+    date,
+    SUM(revenue) AS revenue,
+    SUM(orders) AS orders,
+    SUM(spend) AS spend,
+    SUM(margin) AS margin
+  FROM `YOUR_GCP_PROJECT.analytics.campaign_daily`
+  WHERE campaign_id = @campaign_id
+    AND date >= DATE_SUB(CURRENT_DATE(), INTERVAL @days DAY)
+  GROUP BY date
+  ORDER BY date
+
+---
+kind: tool
+name: category_product_performance
+type: bigquery-sql
+source: marketplace-bq
+description: Bir kategoride son N gunun urun bazli ciro ve marj performansini getirir.
+parameters:
+  - name: category
+    type: string
+    description: Kategori adi (orn. ev-yasam)
+  - name: days
+    type: integer
+    description: Kac gunluk veri isteniyor (1-30)
+  - name: min_revenue
+    type: float
+    description: Minimum ciro esigi (opsiyonel)
+statement: |
+  SELECT
+    product_id,
+    ANY_VALUE(product_name) AS product_name,
+    SUM(revenue) AS revenue,
+    SUM(orders) AS orders,
+    SAFE_DIVIDE(SUM(margin), SUM(revenue)) AS margin_pct,
+    SAFE_DIVIDE(SUM(revenue), SUM(spend)) AS roas
+  FROM `YOUR_GCP_PROJECT.analytics.category_product_daily`
+  WHERE category = @category
+    AND date >= DATE_SUB(CURRENT_DATE(), INTERVAL @days DAY)
+    AND revenue >= @min_revenue
+  GROUP BY product_id
+  ORDER BY revenue DESC
+  LIMIT 100
+
+---
+kind: tool
+name: portfolio_health
+type: bigquery-sql
+source: marketplace-bq
+description: Tum aktif kampanyalarin son N gunluk ozet performansi ve ROAS'i.
+parameters:
+  - name: days
+    type: integer
+    description: Kac gunluk veri isteniyor (1-30)
+statement: |
+  SELECT
+    campaign_id,
+    ANY_VALUE(campaign_name) AS campaign_name,
+    ANY_VALUE(category) AS category,
+    SUM(revenue) AS revenue,
+    SUM(spend) AS spend,
+    SUM(margin) AS margin,
+    SAFE_DIVIDE(SUM(revenue), SUM(spend)) AS roas
+  FROM `YOUR_GCP_PROJECT.analytics.campaign_daily`
+  WHERE date >= DATE_SUB(CURRENT_DATE(), INTERVAL @days DAY)
+  GROUP BY campaign_id
+  ORDER BY revenue DESC
